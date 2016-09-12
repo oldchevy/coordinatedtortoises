@@ -15,6 +15,26 @@ var sequelize = new Sequelize(url, {
   }
 });
 
+//sequelize.drop();
+
+var userDefaults = {
+  currency: {
+    text: 'Currency: BTC',
+    val: 'BTC'
+  },
+  resolution: {
+    text: 'Resolution: all',
+    val: 'all'
+  },
+  exchange: {
+    BTC: {
+      last: 1,
+      symbol: 'BTC'
+    }
+  },
+  synced: false
+};
+
 usersModel(sequelize);
 //Localhost settings
 // var database = 'userPrefs';
@@ -28,7 +48,7 @@ var findAll = function(model, callback) {
   model.findAll({}).then(callback);
 };
 
-var findUser = function(username, password, callback){
+var findUser = function(username, password, callback) {
   sequelize.models.users.findAll({
     where: {
       username: username,
@@ -51,6 +71,7 @@ var findUserByUsername = function(username, callback) {
       username: username,
     }
   }).then(function(user) {
+    console.log(user);
     if (user.length > 0) {
       callback(user[0].dataValues);
     } else {
@@ -105,7 +126,7 @@ var newUser = function(username, password, callback) {
           username: username,
           password: hashP,
           salt: salt,
-          preferences: {}
+          preferences: JSON.stringify(userDefaults)
         }
       }).then(callback);
     });
